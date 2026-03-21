@@ -1,12 +1,6 @@
 import streamlit as st
 import requests
 
-# ---------------- Page Config ----------------
-st.set_page_config(
-    page_title="AI Career Advisor",
-    page_icon="🚀",
-    layout="wide"
-)
 
 # ---------------- Custom Styling ----------------
 st.markdown("""

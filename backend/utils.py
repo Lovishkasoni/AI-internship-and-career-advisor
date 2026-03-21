@@ -1,21 +1,35 @@
 def extract_skills(text):
     """
-    Simple keyword-based skill extraction from resume text
+    Skill extraction with normalization
     """
-    skills_list = [
-        "python", "java", "c++", "sql", "ml", "machine learning",
-        "deep learning", "nlp", "fastapi", "streamlit", "tensorflow",
-        "pandas", "numpy", "javascript", "html", "css", "react"
-    ]
-
     text = text.lower()
+
     found_skills = []
 
-    for skill in skills_list:
-        if skill in text:
-            # avoid duplicates
-            if skill not in found_skills:
-                found_skills.append(skill)
+    # Python
+    if "python" in text:
+        found_skills.append("python")
+
+    # Machine Learning (normalize everything to 'ml')
+    if "machine learning" in text or "ml" in text:
+        found_skills.append("ml")
+
+    # SQL
+    if "sql" in text:
+        found_skills.append("sql")
+
+    # Other skills
+    if "fastapi" in text:
+        found_skills.append("fastapi")
+
+    if "streamlit" in text:
+        found_skills.append("streamlit")
+
+    if "deep learning" in text:
+        found_skills.append("deep learning")
+
+    if "nlp" in text:
+        found_skills.append("nlp")
 
     return found_skills
 
@@ -47,6 +61,30 @@ def get_missing_skills(current_skills):
     missing = [skill for skill in required_skills if skill not in current_skills]
 
     return missing
+
+
+def extract_projects(text):
+    """
+    Simple project detection from resume text
+    """
+    text = text.lower()
+
+    project_keywords = [
+        "project",
+        "built",
+        "developed",
+        "created",
+        "implemented"
+    ]
+
+    projects = []
+
+    for keyword in project_keywords:
+        if keyword in text:
+            projects.append("project_found")
+            break
+
+    return projects
 
 
 def get_project_feedback(old_data, current_data):
