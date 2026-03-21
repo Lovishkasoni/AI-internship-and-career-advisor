@@ -62,7 +62,7 @@ with st.container():
         height=200
     )
 
-    analyze_btn = st.button("Analyze My Career Progress 🚀")
+    analyze_btn = st.button("Analyze My Career Progress")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- API Call ----------------
@@ -92,7 +92,7 @@ if analyze_btn:
 
                         if data.get("skills"):
                             for skill in data["skills"]:
-                                st.success(f"✅ {skill}")
+                                st.success(f {skill}")
                         else:
                             st.info("No skills detected")
                         st.markdown('</div>', unsafe_allow_html=True)
@@ -102,9 +102,9 @@ if analyze_btn:
 
                         if data.get("missing_skills"):
                             for skill in data["missing_skills"]:
-                                st.warning(f"⚠️ {skill}")
+                                st.warning(f" {skill}")
                         else:
-                            st.success("🎉 No missing skills!")
+                            st.success(" No missing skills!")
                         st.markdown('</div>', unsafe_allow_html=True)
 
                     with col2:
