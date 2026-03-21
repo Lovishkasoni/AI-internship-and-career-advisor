@@ -2,24 +2,18 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from llm import generate_response
 from memory import store_memory, get_memory
+from utils import extract_skills, compare_progress, get_missing_skills, get_project_feedback
 
 app = FastAPI()
 
-# -------- Input Schema --------
+# -------- Input Model --------
 class UserInput(BaseModel):
     user_id: str
     resume_text: str
 
-# -------- Skill Extraction --------
-def extract_skills(text):
-    skills_list = ["python", "ml", "sql", "nlp"]
-    text = text.lower()
-    return [s for s in skills_list if s in text]
-
 # -------- Main API --------
 @app.post("/analyze")
 def analyze(data: UserInput):
-
     current_skills = extract_skills(data.resume_text)
 
     current_data = {
@@ -30,40 +24,37 @@ def analyze(data: UserInput):
 
     old_data = get_memory(data.user_id)
 
-    improvement = ""
+    # Logic from utils.py
+    improvement = compare_progress(old_data, current_skills)
+    missing_skills = get_missing_skills(current_skills)
+    project_feedback = get_project_feedback(old_data, current_data)
 
-    if old_data:
-        old_skills = set(old_data.get("skills", []))
-        new_skills = set(current_skills)
-
-        gained = list(new_skills - old_skills)
-
-        if gained:
-            improvement = f"New skills learned: {gained}"
-        else:
-            improvement = "No improvement detected"
-
+    # Save updated memory
     store_memory(data.user_id, current_data)
 
-    # ADD THIS BLOCK RIGHT HERE
+    # -------- LLM Prompt --------
     prompt = f"""
-    Previous data: {old_data}
-    Current data: {current_data}
+Previous data: {old_data}
+Current data: {current_data}
 
-    Improvement: {improvement}
+Improvement: {improvement}
+Missing skills: {missing_skills}
+Project feedback: {project_feedback}
 
-    Give personalized career advice for internship.
-    If no improvement, be strict.
-    """
+Give personalized career advice for internship.
+If no improvement, be strict.
+"""
 
     advice = generate_response(prompt)
 
-    #  MODIFY RETURN
     return {
         "skills": current_skills,
+        "missing_skills": missing_skills,
         "improvement": improvement,
+        "project_feedback": project_feedback,
         "advice": advice
     }
+
 # -------- Test Route --------
 @app.get("/")
 def home():
